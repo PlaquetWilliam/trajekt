@@ -1,0 +1,20 @@
+# Blueprint Render : https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: trajekt
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: MONGODB_URI
+        sync: false # à saisir dans le tableau de bord Render
+      - key: MONGODB_DB
+        value: trajekt
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false # ex. https://trajekt.onrender.com

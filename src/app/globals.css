@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+/* Design system « Carnet de route » — valeurs issues de la maquette */
+@theme {
+  --color-paper: #f3eee5;
+  --color-card: #fbf8f2;
+  --color-sand: #e4dccd;
+  --color-line: #d9d0c1;
+  --color-ink: #1f1c17;
+  --color-muted: #4a443a;
+  --color-meta: #6d6456;
+  --color-accent: #a54e33;
+  --color-accent-dark: #86391f;
+  --color-footer-meta: #b9ad99;
+  --color-error: #a3262a;
+  --color-success: #3f6b4a;
+}
+
+@theme inline {
+  --font-serif: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-instrument-sans), "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-paper font-sans text-ink antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  @variant md {
+    padding-inline: 4.5rem;
+  }
+}
+
+/* Zone réservée à une photo tant que les vraies images ne sont pas là */
+@utility hatch {
+  background-color: var(--color-sand);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgb(31 28 23 / 0.06) 0 1px,
+    transparent 1px 12px
+  );
+}
