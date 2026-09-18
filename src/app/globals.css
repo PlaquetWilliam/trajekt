@@ -16,6 +16,11 @@
   --color-success: #3f6b4a;
 }
 
+/* Pour Chrome, Safari et Opera */
+body::-webkit-scrollbar {
+  display: none;
+}
+
 @theme inline {
   --font-serif: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
   --font-sans: var(--font-instrument-sans), "Helvetica Neue", Arial, sans-serif;
@@ -50,7 +55,6 @@
 
 @utility container-page {
   width: 100%;
-  max-width: 80rem;
   margin-inline: auto;
   padding-inline: 1.5rem;
   @variant md {
@@ -66,4 +70,30 @@
     rgb(31 28 23 / 0.06) 0 1px,
     transparent 1px 12px
   );
+}
+
+/* Texte courant des pages légales */
+@layer components {
+  .legal-prose p,
+  .legal-prose li {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-muted);
+  }
+  .legal-prose ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .legal-prose a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .legal-prose strong {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
 }

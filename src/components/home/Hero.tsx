@@ -43,13 +43,13 @@ function HeroCollage() {
     <div className="relative mx-auto aspect-square w-full max-w-[560px]" aria-hidden="true">
       {/* Remplacer ces zones par des <Image> (next/image) quand les photos seront prêtes */}
       <motion.div
-        className="hatch absolute top-[5%] left-0 h-[68%] w-[54%] rounded"
+        className="hatch absolute top-[5%] left-10 h-[68%] w-[54%] rounded"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.1, ease }}
       />
       <motion.div
-        className="hatch absolute top-[30%] right-0 h-[61%] w-[46%] rounded shadow-[0_18px_40px_rgb(31_28_23/0.12)]"
+        className="hatch absolute top-[35%] right-0 h-[61%] w-[60%] rounded shadow-[0_18px_40px_rgb(31_28_23/0.12)]"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.25, ease }}
@@ -64,22 +64,27 @@ function HeroCollage() {
               strokeWidth="8"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
-              transition={{ duration: 2.2, delay: 0.5, ease: "easeInOut" }}
+              transition={{ duration: 2.5, delay: 1, ease: "easeInOut" }}
             />
           </mask>
         </defs>
         <path d={ROUTE} stroke="var(--color-accent)" strokeWidth="2" strokeDasharray="6 8" mask="url(#route-reveal)" />
-        <circle cx="120" cy="110" r="7" fill="var(--color-paper)" stroke="var(--color-ink)" strokeWidth="2" />
+        <motion.circle
+          cx="120" cy="110" r="7"
+          fill="var(--color-paper)" stroke="var(--color-ink)" strokeWidth="2"
+          initial={{ scale: 0 }} animate={{ scale: 1 }}
+          transition={{ delay: 1, type: "spring", stiffness: 300, damping: 18 }}
+        />
         <motion.circle
           cx="410" cy="250" r="7"
           fill="var(--color-paper)" stroke="var(--color-ink)" strokeWidth="2"
           initial={{ scale: 0 }} animate={{ scale: 1 }}
-          transition={{ delay: 1.5, type: "spring", stiffness: 300, damping: 18 }}
+          transition={{ delay: 2, type: "spring", stiffness: 300, damping: 18 }}
         />
         <motion.circle
           cx="380" cy="500" r="9" fill="var(--color-accent)"
           initial={{ scale: 0 }} animate={{ scale: 1 }}
-          transition={{ delay: 2.6, type: "spring", stiffness: 300, damping: 18 }}
+          transition={{ delay: 3, type: "spring", stiffness: 300, damping: 18 }}
         />
       </svg>
       <motion.div
@@ -88,7 +93,7 @@ function HeroCollage() {
         animate={{ opacity: 1, rotate: -2 }}
         transition={{ delay: 1.2, duration: 0.6, ease }}
       >
-        <span className="font-serif text-[22px] italic">Étape 3 sur 5</span>
+        <span className="font-serif text-[12px] italic md:text-[22px]">Étape 3 sur 5</span>
       </motion.div>
     </div>
   );

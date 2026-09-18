@@ -1,4 +1,5 @@
 import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
+import { CONTINENT_VALUES, STYLE_VALUES } from "@/lib/catalog";
 
 const itineraryStepSchema = new Schema(
   {
@@ -14,12 +15,8 @@ const destinationSchema = new Schema(
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
     name: { type: String, required: true, trim: true },
     country: { type: String, required: true, trim: true },
-    continent: {
-      type: String,
-      required: true,
-      enum: ["Europe", "Afrique", "Asie", "Amériques", "Océanie"],
-    },
-    styles: { type: [String], default: [] },
+    continent: { type: String, required: true, enum: CONTINENT_VALUES },
+    styles: { type: [{ type: String, enum: STYLE_VALUES }], default: [] },
     durationDays: { type: Number, min: 1 },
     bestPeriod: { type: String, trim: true },
     budgetFrom: { type: Number, min: 0 },
@@ -38,6 +35,8 @@ const destinationSchema = new Schema(
 );
 
 destinationSchema.index({ published: 1, featured: -1, name: 1 });
+destinationSchema.index({ published: 1, continent: 1 });
+destinationSchema.index({ published: 1, styles: 1 });
 
 export type DestinationDoc = InferSchemaType<typeof destinationSchema>;
 

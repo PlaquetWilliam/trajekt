@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { mainNav } from "@/lib/site";
+import { focusedPaths, mainNav } from "@/lib/site";
 import { Logo } from "@/components/ui/Logo";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 
@@ -13,6 +13,22 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   const close = () => setOpen(false);
+
+  if (focusedPaths.includes(pathname)) {
+    return (
+      <header className="container-page">
+        <div className="flex h-16 items-center justify-between border-b border-line md:h-22">
+          <Logo />
+          <Link href="/" className="flex h-11 items-center gap-2 text-[15px] text-ink hover:text-accent">
+            Enregistrer et quitter
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </Link>
+        </div>
+      </header>
+    );
+  }
 
   const isActive = (href: string) =>
     !href.includes("#") && (pathname === href || pathname.startsWith(`${href}/`));

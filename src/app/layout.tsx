@@ -3,7 +3,8 @@ import { Instrument_Sans, Instrument_Serif } from "next/font/google";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { MotionProvider } from "@/components/MotionProvider";
-import { site } from "@/lib/site";
+import { HideOnPaths } from "@/components/layout/HideOnPaths";
+import { chromelessPaths, focusedPaths, site } from "@/lib/site";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -48,11 +49,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Aller au contenu
         </a>
         <MotionProvider>
-          <SiteHeader />
+          <HideOnPaths paths={chromelessPaths}>
+            <SiteHeader />
+          </HideOnPaths>
           <main id="contenu" className="flex-1">
             {children}
           </main>
-          <SiteFooter />
+          <HideOnPaths paths={[...focusedPaths, ...chromelessPaths]}>
+            <SiteFooter />
+          </HideOnPaths>
         </MotionProvider>
       </body>
     </html>

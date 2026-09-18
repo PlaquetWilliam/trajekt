@@ -9,7 +9,7 @@ export const site = {
 
 export const mainNav = [
   { href: "/destinations", label: "Destinations" },
-  { href: "/#comment-ca-marche", label: "Comment ça marche" },
+  { href: "/", label: "Comment ça marche" },
   { href: "/compte", label: "Mon compte" },
 ] as const;
 
@@ -18,7 +18,7 @@ export const footerNav = [
     title: "Explorer",
     links: [
       { href: "/destinations", label: "Destinations" },
-      { href: "/#comment-ca-marche", label: "Comment ça marche" },
+      { href: "/", label: "Comment ça marche" },
       { href: "/creer-mon-voyage", label: "Créer mon voyage" },
     ],
   },
@@ -38,3 +38,9 @@ export const footerNav = [
     ],
   },
 ] as const;
+
+/** Pages « tunnel » : en-tête simplifié, pas de pied de page. */
+export const focusedPaths = ["/creer-mon-voyage"];
+
+/** Pages sans en-tête ni pied de page du site (écran de connexion). */
+export const chromelessPaths = ["/connexion", "/inscription"];

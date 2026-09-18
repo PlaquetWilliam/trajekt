@@ -18,3 +18,7 @@ services:
         value: trajekt
       - key: NEXT_PUBLIC_SITE_URL
         sync: false # ex. https://trajekt.onrender.com
+      - key: BETTER_AUTH_URL
+        sync: false # même valeur que NEXT_PUBLIC_SITE_URL
+      - key: BETTER_AUTH_SECRET
+        generateValue: true # Render génère une clé aléatoire

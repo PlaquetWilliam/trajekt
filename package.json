@@ -7,15 +7,19 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "node --env-file=.env.local scripts/seed-destinations.mjs"
+    "seed": "node --env-file=.env.local scripts/seed-destinations.mjs",
+    "admin": "node --env-file=.env.local scripts/set-admin.mjs"
   },
   "dependencies": {
+    "better-auth": "^1.7.5",
+    "mongodb": "^7.6.0",
     "mongoose": "^9.10.1",
     "motion": "^13.3.0",
     "next": "16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

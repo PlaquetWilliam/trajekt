@@ -15,7 +15,7 @@ npm run dev                  # http://localhost:3000
 
 Sans `MONGODB_URI`, le site démarre quand même : la section « Destinations à explorer » est simplement masquée.
 
-Pour ajouter trois destinations d'exemple : `npm run seed`.
+Pour ajouter six destinations d'exemple (ou les remettre à jour) : `npm run seed`.
 
 | Commande | Rôle |
 | --- | --- |
@@ -23,29 +23,107 @@ Pour ajouter trois destinations d'exemple : `npm run seed`.
 | `npm run build` | build de production |
 | `npm run start` | lance le build (utilisé par Render) |
 | `npm run lint` | vérifie le code |
-| `npm run seed` | insère des destinations d'exemple |
+| `npm run seed` | insère ou met à jour les destinations d'exemple |
 
 ## Structure
 
 ```
 src/
-  app/                 routes (App Router)
-    layout.tsx         polices, en-tête, pied de page, SEO global
-    page.tsx           accueil
-    api/health/        point de contrôle pour Render
+  app/                   routes (App Router)
+    layout.tsx           polices, en-tête, pied de page, SEO global
+    page.tsx             accueil
+    destinations/
+      (catalogue)/       catalogue /destinations (filtres, pagination, chargement, erreur)
+      [slug]/            fiche destination /destinations/…
+    creer-mon-voyage/    formulaire en 5 étapes (page, actions.ts = enregistrement), merci/
+    (auth)/              connexion, inscription
+    compte/              espace client
+    admin/               espace admin (liste et traitement des demandes)
+    mentions-legales/, confidentialite/, contact/
+    api/health/          point de contrôle pour Render
     robots.ts, sitemap.ts
   components/
-    layout/            SiteHeader, SiteFooter
-    home/              sections de l'accueil
-    destinations/      DestinationCard
-    ui/                ButtonLink, Logo, Reveal (animation au scroll)
-  lib/                 site.ts (config), mongodb.ts (connexion), destinations.ts
-  models/              schémas Mongoose : Destination, TripRequest
-scripts/               seed-destinations.mjs
+    layout/              SiteHeader, SiteFooter, HideOnPaths
+    home/                sections de l'accueil
+    destinations/        carte, filtres, pagination, frise d'itinéraire
+    trip/                étapes, progression, récapitulatif, TripWizard (logique du formulaire)
+    form/                champs accessibles (texte, pastilles, cartes, compteur, erreurs)
+    ui/                  ButtonLink, Logo, Select, Reveal (animation au scroll)
+  lib/
+    site.ts              configuration du site
+    catalog.ts           continents, styles, durées
+    trip.ts              règles de validation (Zod) partagées navigateur / serveur
+    mongodb.ts           connexion
+    destinations.ts      requêtes
+  models/                schémas Mongoose : Destination, TripRequest
+scripts/                 seed-destinations.mjs, set-admin.mjs
 ```
 
 Le design system « Carnet de route » est défini dans `src/app/globals.css` (bloc `@theme`) :
 couleurs `paper`, `card`, `sand`, `line`, `ink`, `muted`, `meta`, `accent`, `error`… utilisables en classes Tailwind (`bg-paper`, `text-accent`…), polices `font-serif` (Instrument Serif) et `font-sans` (Instrument Sans).
+
+## Ajouter une destination
+
+Les destinations sont des documents de la collection `destinations` (schéma : `src/models/Destination.ts`).
+Champs principaux : `slug` (adresse de la fiche), `name`, `country`, `continent`
+(`europe`, `afrique`, `asie`, `ameriques`, `oceanie`), `styles` (valeurs listées dans `src/lib/catalog.ts`),
+`durationDays`, `bestPeriod`, `budgetFrom`, `summary`, `description`, `image` `{ src, alt }`, `gallery`,
+`itinerary` `[{ days, title, description }]`, `featured` (mise en avant sur l'accueil), `published`.
+
+Les photos peuvent être dans `public/images/…` (`src: "/images/lisbonne.jpg"`) ou chez Cloudinary / Unsplash.
+Pour un autre hébergeur, ajoutez son adresse dans `images.remotePatterns` (`next.config.ts`).
+Les pages sont mises à jour au plus toutes les 10 minutes après une modification en base.
+
+## Comptes clients
+
+L'authentification utilise [Better Auth](https://www.better-auth.com) (e-mail + mot de passe),
+avec les sessions stockées dans MongoDB (collections `user`, `session`, `account`, `verification`).
+
+- `src/lib/auth.ts` : configuration ; `src/app/api/auth/[...all]` : routes internes de Better Auth.
+- `src/lib/session.ts` : `getCurrentUser()` et `requireUser()` (à appeler dans chaque page protégée).
+- `src/proxy.ts` : redirige vers `/connexion` les visiteurs sans session qui ouvrent `/compte…`.
+- Pages : `/connexion`, `/inscription`, `/compte` (mes voyages), `/compte/demandes/[id]`, `/compte/informations`.
+
+Variables à ajouter dans `.env.local` **et sur Render** (Environment) :
+
+| Variable | Valeur |
+| --- | --- |
+| `BETTER_AUTH_SECRET` | clé aléatoire : `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` |
+| `BETTER_AUTH_URL` | `http://localhost:3000` en local, l'URL Render en production |
+
+Une demande envoyée sans être connecté est rattachée automatiquement au compte
+si la personne s'inscrit ou se connecte ensuite depuis le même navigateur (cookie signé, 30 jours).
+
+## Espace admin
+
+`/admin` liste toutes les demandes (filtre par statut, recherche, pagination). Sur chaque demande,
+un administrateur change le statut, écrit un **message au client** (affiché dans son espace) et une
+**note interne**. Chaque changement de statut est gardé dans l'historique.
+
+Pour donner le rôle admin à un compte (créé au préalable sur le site) :
+
+```bash
+npm run admin -- vous@exemple.fr            # donner le rôle
+npm run admin -- vous@exemple.fr --retirer  # le retirer
+```
+
+En production, lancez la commande en local avec la `MONGODB_URI` de production, ou depuis l'onglet
+**Shell** du service Render : `node scripts/set-admin.mjs vous@exemple.fr`.
+Un visiteur non administrateur qui ouvre `/admin` obtient une page 404.
+
+## Pages légales
+
+`/mentions-legales`, `/confidentialite` et `/contact` lisent leurs informations dans `src/lib/legal.ts`.
+**Remplacez toutes les valeurs entre crochets** (éditeur, adresse, e-mail, téléphone, région Atlas)
+avant d'ouvrir le site au public. Le site n'utilise que des cookies nécessaires à son fonctionnement :
+aucun bandeau de consentement n'est requis tant qu'aucun outil de statistiques ou de publicité n'est ajouté.
+
+## Demandes de voyage
+
+Chaque envoi du formulaire crée un document dans la collection `triprequests` (statut `sent`),
+visible dans Atlas → Browse Collections. Le brouillon en cours est gardé dans le navigateur
+(localStorage) jusqu'à l'envoi, et apparaît dans « Mes voyages » avec un bouton « Reprendre ».
+Protection anti-spam : champ piège invisible + 5 envois maximum par adresse IP toutes les 10 minutes.
 
 ## 1. MongoDB Atlas (gratuit)
 
@@ -82,6 +160,10 @@ Bon à savoir sur l'offre gratuite : le service se met en veille après ~15 min 
 
 ## Prochaines étapes
 
-- [ ] Catalogue `/destinations` et fiche `/destinations/[slug]`
-- [ ] Formulaire « Créer mon voyage » en 5 étapes, avec validation
-- [ ] Comptes clients : inscription, connexion, espace client
+- [x] Catalogue `/destinations` et fiche `/destinations/[slug]`
+- [x] Formulaire « Créer mon voyage » en 5 étapes, avec validation
+- [ ] Recevoir un e-mail à chaque nouvelle demande
+- [x] Comptes clients : inscription, connexion, espace client
+- [ ] Mot de passe oublié et vérification de l'adresse e-mail (nécessitent un service d'envoi d'e-mails)
+- [ ] Favoris
+- [x] Pages légales et espace admin
