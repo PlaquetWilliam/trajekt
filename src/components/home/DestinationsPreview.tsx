@@ -12,7 +12,7 @@ export function DestinationsPreview({ destinations }: { destinations: Destinatio
           Destinations à explorer
         </h2>
         <Link href="/destinations" className="text-[15px] text-accent hover:text-accent-dark hover:underline">
-          Tout le catalogue <span aria-hidden="true">→</span>
+          Tout le catalogue<span aria-hidden="true">▸</span>
         </Link>
       </div>
       <ul className="grid gap-7 md:grid-cols-3 md:gap-6">

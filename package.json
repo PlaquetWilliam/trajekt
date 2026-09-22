@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "node --env-file=.env.local scripts/seed-destinations.mjs",
+    "images": "node --env-file=.env.local scripts/sync-destination-images.mjs",
     "admin": "node --env-file=.env.local scripts/set-admin.mjs"
   },
   "dependencies": {

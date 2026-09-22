@@ -22,7 +22,7 @@ const instrumentSans = Instrument_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — Voyages sur mesure`,
+    default: `Voyages sur mesure · ${site.name}`,
     template: `%s · ${site.name}`,
   },
   description: site.description,

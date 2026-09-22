@@ -1,26 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { StatusBadge } from "@/components/account/StatusBadge";
-import { TRIP_DRAFT_KEY } from "@/lib/trip-draft-storage";
+import { ConfirmDialog, DialogAction } from "@/components/ui/ConfirmDialog";
+import { clearTripDraft, readTripDraft, subscribeToTripDraft } from "@/lib/trip-draft-storage";
 import { TRIP_STEPS } from "@/lib/trip";
-
-const subscribe = (cb: () => void) => {
-  window.addEventListener("storage", cb);
-  return () => window.removeEventListener("storage", cb);
-};
-const read = () => {
-  try {
-    return window.localStorage.getItem(TRIP_DRAFT_KEY);
-  } catch {
-    return null;
-  }
-};
 
 /** Demande commencée sur cet appareil mais pas encore envoyée. */
 export function DraftCard() {
-  const raw = useSyncExternalStore(subscribe, read, () => null);
+  const raw = useSyncExternalStore(subscribeToTripDraft, readTripDraft, () => null);
+  const [confirming, setConfirming] = useState(false);
   if (!raw) return null;
 
   let destination = "Destination à définir";
@@ -43,12 +33,42 @@ export function DraftCard() {
           Arrêtée à l&apos;étape {step + 1} sur {TRIP_STEPS.length} · non envoyée
         </p>
       </div>
-      <Link
-        href="/creer-mon-voyage"
-        className="inline-flex h-11 items-center justify-center rounded-full border border-ink px-5 text-[15px] text-ink transition-colors after:absolute after:inset-0 hover:bg-ink hover:text-paper"
+      <div className="flex flex-wrap items-center gap-2">
+        <Link
+          href="/creer-mon-voyage"
+          className="inline-flex h-11 items-center justify-center rounded-full border border-ink px-5 text-[15px] text-ink transition-colors after:absolute after:inset-0 hover:bg-ink hover:text-paper"
+        >
+          Reprendre
+        </Link>
+        {/* Au-dessus de la zone cliquable de la carte */}
+        <button
+          type="button"
+          onClick={() => setConfirming(true)}
+          className="relative z-10 inline-flex h-11 items-center justify-center rounded-full px-4 text-[15px] text-meta transition-colors hover:text-error"
+        >
+          Supprimer
+        </button>
+      </div>
+
+      <ConfirmDialog
+        open={confirming}
+        onClose={() => setConfirming(false)}
+        title="Supprimer cette demande ?"
+        description={`« ${destination} » n'a pas encore été envoyée. Le brouillon sera effacé de cet appareil, sans possibilité de le récupérer.`}
       >
-        Reprendre
-      </Link>
+        <DialogAction
+          tone="danger"
+          onClick={() => {
+            clearTripDraft();
+            setConfirming(false);
+          }}
+        >
+          Supprimer définitivement
+        </DialogAction>
+        <DialogAction tone="ghost" onClick={() => setConfirming(false)}>
+          Garder ma demande
+        </DialogAction>
+      </ConfirmDialog>
     </article>
   );
 }

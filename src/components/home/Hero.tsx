@@ -1,10 +1,14 @@
 "use client";
 
 import { motion } from "motion/react";
+import Image from "next/image";
 import { ButtonLink } from "@/components/ui/ButtonLink";
+// Photos du collage : importées depuis src/assets pour que Next génère
+// les tailles, le format AVIF/WebP et le flou de chargement automatiquement.
+import islande from "@/assets/Image1.jpg";
+import grece from "@/assets/Image2.jpg";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-const ROUTE = "M120 110 C 260 60, 250 300, 410 250 S 470 470, 380 500";
 
 export function Hero() {
   return (
@@ -38,62 +42,62 @@ export function Hero() {
   );
 }
 
+/**
+ * Collage de la page d'accueil. Pour changer une photo : remplacez le fichier
+ * dans src/assets (ou l'import ci-dessus) et mettez à jour le texte alternatif.
+ */
 function HeroCollage() {
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[560px]" aria-hidden="true">
-      {/* Remplacer ces zones par des <Image> (next/image) quand les photos seront prêtes */}
+    <div className="relative mx-auto aspect-square w-full max-w-[600px]">
       <motion.div
-        className="hatch absolute top-[5%] left-10 h-[68%] w-[54%] rounded"
+        className="hatch absolute top-[5%] left-[0%] h-[68%] w-[54%] overflow-hidden rounded"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.1, ease }}
-      />
+        transition={{ delay: 0.4, duration: 0.8, ease }}
+      >
+        <Image
+          src={islande}
+          alt="Cascade au fond d'une vallée islandaise, au bout d'un ponton de bois."
+          fill
+          sizes="(min-width: 768px) 302px, 54vw"
+          placeholder="blur"
+          priority
+          className="object-cover"
+        />
+      </motion.div>
+
       <motion.div
-        className="hatch absolute top-[35%] right-0 h-[61%] w-[60%] rounded shadow-[0_18px_40px_rgb(31_28_23/0.12)]"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.25, ease }}
-      />
-      <svg viewBox="0 0 560 560" fill="none" className="absolute inset-0 size-full">
-        {/* Le tracé pointillé est révélé progressivement par un masque animé */}
-        <defs>
-          <mask id="route-reveal" maskUnits="userSpaceOnUse">
-            <motion.path
-              d={ROUTE}
-              stroke="white"
-              strokeWidth="8"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 2.5, delay: 1, ease: "easeInOut" }}
-            />
-          </mask>
-        </defs>
-        <path d={ROUTE} stroke="var(--color-accent)" strokeWidth="2" strokeDasharray="6 8" mask="url(#route-reveal)" />
-        <motion.circle
-          cx="120" cy="110" r="7"
-          fill="var(--color-paper)" stroke="var(--color-ink)" strokeWidth="2"
-          initial={{ scale: 0 }} animate={{ scale: 1 }}
-          transition={{ delay: 1, type: "spring", stiffness: 300, damping: 18 }}
-        />
-        <motion.circle
-          cx="410" cy="250" r="7"
-          fill="var(--color-paper)" stroke="var(--color-ink)" strokeWidth="2"
-          initial={{ scale: 0 }} animate={{ scale: 1 }}
-          transition={{ delay: 2, type: "spring", stiffness: 300, damping: 18 }}
-        />
-        <motion.circle
-          cx="380" cy="500" r="9" fill="var(--color-accent)"
-          initial={{ scale: 0 }} animate={{ scale: 1 }}
-          transition={{ delay: 3, type: "spring", stiffness: 300, damping: 18 }}
-        />
-      </svg>
-      <motion.div
-        className="absolute top-[80%] left-[27%] flex -rotate-2 flex-col gap-1 rounded border border-line bg-card px-4 py-3"
+        className="absolute top-[15%] left-[45%] flex -rotate-2 flex-col gap-1 rounded border border-line bg-card px-8 py-3"
         initial={{ opacity: 0, rotate: -8 }}
         animate={{ opacity: 1, rotate: -2 }}
-        transition={{ delay: 1.2, duration: 0.6, ease }}
+        transition={{ delay: 0.8, duration: 0.8, ease }}
       >
-        <span className="font-serif text-[12px] italic md:text-[22px]">Étape 3 sur 5</span>
+        <span className="font-serif text-[12px] italic md:text-[22px]">Islande</span>
+      </motion.div>
+
+      <motion.div
+        className="hatch absolute top-[35%] right-[0%] h-[61%] w-[60%] overflow-hidden rounded shadow-[0_18px_40px_rgb(31_28_23/0.12)]"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2, duration: 0.8, ease }}
+      >
+        <Image
+          src={grece}
+          alt="Crique grecque aux eaux turquoise et transparentes, bordée de collines boisées."
+          fill
+          sizes="(min-width: 768px) 336px, 60vw"
+          placeholder="blur"
+          className="object-cover"
+        />
+      </motion.div>
+
+      <motion.div
+        className="absolute top-[80%] left-[30%] flex -rotate-2 flex-col gap-1 rounded border border-line bg-card px-8 py-3"
+        initial={{ opacity: 0, rotate: -8 }}
+        animate={{ opacity: 1, rotate: -2 }}
+        transition={{ delay: 1.6, duration: 0.8, ease }}
+      >
+        <span className="font-serif text-[12px] italic md:text-[22px]">Grèce</span>
       </motion.div>
     </div>
   );

@@ -6,7 +6,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { submitTripRequest } from "@/app/creer-mon-voyage/actions";
 import { FIELD_ORDER, TRIP_STEPS, emptyDraft, sanitizeDraft, validateStep, type FieldErrors, type TripDraft } from "@/lib/trip";
 import { ErrorIcon, fieldId } from "@/components/form/fields";
-import { TRIP_DRAFT_KEY } from "@/lib/trip-draft-storage";
+import { clearTripDraft, readTripDraft, writeTripDraft } from "@/lib/trip-draft-storage";
+import { ConfirmDialog, DialogAction } from "@/components/ui/ConfirmDialog";
 import { TripStepper } from "@/components/trip/TripStepper";
 import { TripSummary } from "@/components/trip/TripSummary";
 import {
@@ -18,7 +19,6 @@ import {
   type DestinationOption,
 } from "@/components/trip/steps";
 
-const STORAGE_KEY = TRIP_DRAFT_KEY;
 const LAST = TRIP_STEPS.length - 1;
 
 type Saved = { draft: TripDraft; step: number; reached: number };
@@ -27,7 +27,7 @@ type Account = { firstName: string; lastName: string; email: string } | null;
 
 function readSaved(): Saved | null {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = readTripDraft();
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<Saved>;
     const step = Math.min(LAST, Math.max(0, Number(parsed.step) || 0));
@@ -39,12 +39,8 @@ function readSaved(): Saved | null {
 }
 
 function writeSaved(value: Saved | null) {
-  try {
-    if (value) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
-    else window.localStorage.removeItem(STORAGE_KEY);
-  } catch {
-    /* stockage indisponible (navigation privée…) : on continue sans brouillon */
-  }
+  if (value) writeTripDraft(JSON.stringify(value));
+  else clearTripDraft();
 }
 
 const noopSubscribe = () => () => {};
@@ -111,16 +107,20 @@ function Wizard({ prefill, options, account }: { prefill: Prefill; options: Dest
   const [showSummary, setShowSummary] = useState(false);
   const [serverError, setServerError] = useState("");
   const [restored, setRestored] = useState(init.restored);
+  const [leaving, setLeaving] = useState(false);
   const [submitting, startSubmit] = useTransition();
 
   const headingRef = useRef<HTMLHeadingElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
   const honeypotRef = useRef<HTMLInputElement>(null);
   const pendingFocus = useRef(false);
+  // Demande envoyée ou supprimée : plus rien ne doit être réécrit dans le navigateur.
+  const closed = useRef(false);
   const [summaryTick, setSummaryTick] = useState(0);
 
   // Sauvegarde automatique du brouillon
   useEffect(() => {
+    if (closed.current) return;
     writeSaved({ draft, step, reached });
   }, [draft, step, reached]);
 
@@ -181,6 +181,7 @@ function Wizard({ prefill, options, account }: { prefill: Prefill; options: Dest
     startSubmit(async () => {
       const result = await submitTripRequest(draft, honeypotRef.current?.value ?? "");
       if (result.ok) {
+        closed.current = true;
         writeSaved(null);
         router.push("/creer-mon-voyage/merci");
         return;
@@ -204,12 +205,54 @@ function Wizard({ prefill, options, account }: { prefill: Prefill; options: Dest
     goTo(0);
   };
 
+  /** Quitter en gardant le brouillon : il est déjà enregistré, on s'en va. */
+  const saveAndLeave = () => {
+    writeSaved({ draft, step, reached });
+    setLeaving(false);
+    router.push(account ? "/compte" : "/");
+  };
+
+  /** Abandonner : le brouillon est effacé de cet appareil, sans retour possible. */
+  const discard = () => {
+    closed.current = true;
+    writeSaved(null);
+    setLeaving(false);
+    router.push("/");
+  };
+
   const errorList = FIELD_ORDER.filter((f) => errors[f]);
   const stepProps = { draft, errors, update };
 
   return (
     <div className="flex flex-col gap-10 md:gap-12">
-      <TripStepper current={step} reached={reached} onSelect={goTo} />
+      <div className="flex items-start justify-between gap-4 md:gap-8">
+        <div className="min-w-0 flex-1">
+          <TripStepper current={step} reached={reached} onSelect={goTo} />
+        </div>
+        <button
+          type="button"
+          onClick={() => setLeaving(true)}
+          className="-mt-1 flex h-9 shrink-0 items-center gap-1.5 rounded-full text-[15px] text-meta transition-colors hover:text-accent"
+        >
+          <CloseIcon />
+          Quitter
+        </button>
+      </div>
+
+      <ConfirmDialog
+        open={leaving}
+        onClose={() => setLeaving(false)}
+        title="Quitter cette demande ?"
+        description={`Vous en êtes à l'étape ${step + 1} sur ${TRIP_STEPS.length}. Vos réponses sont gardées sur cet appareil : vous pouvez les retrouver plus tard, ou les supprimer définitivement.`}
+      >
+        <DialogAction onClick={saveAndLeave}>Enregistrer et quitter</DialogAction>
+        <DialogAction tone="danger" onClick={discard}>
+          Supprimer ma demande
+        </DialogAction>
+        <DialogAction tone="ghost" onClick={() => setLeaving(false)}>
+          Continuer ma demande
+        </DialogAction>
+      </ConfirmDialog>
 
       {restored && (
         <div role="status" className="flex flex-col gap-3 rounded border border-line bg-card px-5 py-4 text-[15px] sm:flex-row sm:items-center sm:justify-between">
@@ -369,6 +412,14 @@ function StepTitle({ step }: { step: number }) {
       <em className="text-accent">{title.slice(cut + 1, -2)}</em>
       {title.slice(-2)}
     </>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
   );
 }
 

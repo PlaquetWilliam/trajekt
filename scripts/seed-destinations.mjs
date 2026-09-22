@@ -102,8 +102,9 @@ for (const d of examples) {
   await collection.updateOne(
     { slug: d.slug },
     {
-      $set: { published: true, itinerary: [], gallery: [], ...d, updatedAt: new Date() },
-      $setOnInsert: { createdAt: new Date() },
+      // image / gallery ne sont pas touchés ici : ils sont gérés par « npm run images ».
+      $set: { published: true, itinerary: [], ...d, updatedAt: new Date() },
+      $setOnInsert: { createdAt: new Date(), gallery: [] },
     },
     { upsert: true },
   );
