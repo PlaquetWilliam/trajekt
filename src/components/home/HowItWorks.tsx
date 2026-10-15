@@ -13,7 +13,7 @@ export function HowItWorks() {
       aria-labelledby="comment-ca-marche-titre"
       className="container-page mt-16 scroll-mt-8 md:mt-22"
     >
-      <div className="flex flex-col gap-8 border-t border-line pt-10">
+      <div className="flex flex-col gap-5 rounded border border-line bg-card p-6 md:p-8">
         <h2 id="comment-ca-marche-titre" className="font-serif text-4xl md:text-[44px]">
           Comment ça marche
         </h2>

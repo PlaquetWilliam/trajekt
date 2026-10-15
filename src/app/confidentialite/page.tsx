@@ -44,7 +44,6 @@ export default function PrivacyPage() {
         <InfoList
           items={[
             { label: "Responsable", value: editor.name },
-            { label: "Adresse", value: editor.address },
             { label: "Contact", value: <a href={`mailto:${editor.email}`}>{editor.email}</a> },
           ]}
         />

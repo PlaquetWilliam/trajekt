@@ -25,11 +25,6 @@ export default function ContactPage() {
         Pour un nouveau projet, le plus simple est de passer par notre formulaire : il nous donne toutes les
         informations utiles pour vous répondre vite.
       </p>
-      <div>
-        <ButtonLink href="/creer-mon-voyage" size="lg">
-          Créer mon voyage
-        </ButtonLink>
-      </div>
 
       <section aria-labelledby="ecrire" className="grid gap-4 sm:grid-cols-2">
         <h2 id="ecrire" className="sr-only">

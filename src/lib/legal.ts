@@ -1,19 +1,16 @@
 /**
  * Informations légales du site.
- * ⚠️ Remplacez chaque valeur entre crochets avant la mise en ligne publique.
  */
 export const legal = {
   updatedAt: "17 septembre 2026",
 
-  // Éditeur du site (vous). Particulier : nom + prénom ; société : raison sociale, forme, capital, RCS/SIREN.
+  // Éditeur du site (vous). Particulier : nom + prénom ; société : raison sociale, forme, capital.
   editor: {
-    name: "[Prénom Nom ou raison sociale]",
-    status: "[Particulier / Micro-entreprise / SAS…]",
-    registration: "[SIREN / RCS — à supprimer si particulier]",
-    address: "[Adresse postale]",
-    email: "[adresse@exemple.fr]",
-    phone: "[Numéro de téléphone]",
-    publicationDirector: "[Prénom Nom]",
+    name: "William Plaquet",
+    status: "Particulier",
+    email: "contact@trajekt.fr",
+    phone: "00 00 00 00 00",
+    publicationDirector: "William Plaquet",
   },
 
   // Hébergeur du site (Render) — coordonnées issues des conditions d'utilisation de Render
@@ -27,7 +24,7 @@ export const legal = {
   // Base de données
   database: {
     name: "MongoDB, Inc. (service MongoDB Atlas)",
-    region: "[Région de votre cluster Atlas, ex. Paris (eu-west-3)]",
+    region: "AWS / Paris (eu-west-3)",
     website: "https://www.mongodb.com",
   },
 

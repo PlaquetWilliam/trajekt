@@ -49,11 +49,8 @@ export function Hero() {
 function HeroCollage() {
   return (
     <div className="relative mx-auto aspect-square w-full max-w-[600px]">
-      <motion.div
+      <div
         className="hatch absolute top-[5%] left-[0%] h-[68%] w-[54%] overflow-hidden rounded"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.8, ease }}
       >
         <Image
           src={islande}
@@ -64,22 +61,19 @@ function HeroCollage() {
           priority
           className="object-cover"
         />
-      </motion.div>
+      </div>
 
       <motion.div
-        className="absolute top-[15%] left-[45%] flex -rotate-2 flex-col gap-1 rounded border border-line bg-card px-8 py-3"
+        className="absolute top-[10%] left-[5%] flex -rotate-2 flex-col gap-1 rounded border border-line bg-card px-8 py-3"
         initial={{ opacity: 0, rotate: -8 }}
         animate={{ opacity: 1, rotate: -2 }}
-        transition={{ delay: 0.8, duration: 0.8, ease }}
+        transition={{ delay: 0.5, duration: 0.8, ease }}
       >
         <span className="font-serif text-[12px] italic md:text-[22px]">Islande</span>
       </motion.div>
 
-      <motion.div
+      <div
         className="hatch absolute top-[35%] right-[0%] h-[61%] w-[60%] overflow-hidden rounded shadow-[0_18px_40px_rgb(31_28_23/0.12)]"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 0.8, ease }}
       >
         <Image
           src={grece}
@@ -89,13 +83,13 @@ function HeroCollage() {
           placeholder="blur"
           className="object-cover"
         />
-      </motion.div>
+      </div>
 
       <motion.div
-        className="absolute top-[80%] left-[30%] flex -rotate-2 flex-col gap-1 rounded border border-line bg-card px-8 py-3"
+        className="absolute top-[80%] left-[75%] flex rotate-8 flex-col gap-1 rounded border border-line bg-card px-8 py-3"
         initial={{ opacity: 0, rotate: -8 }}
         animate={{ opacity: 1, rotate: -2 }}
-        transition={{ delay: 1.6, duration: 0.8, ease }}
+        transition={{ delay: 1, duration: 0.8, ease }}
       >
         <span className="font-serif text-[12px] italic md:text-[22px]">Grèce</span>
       </motion.div>

@@ -3,6 +3,7 @@ import { StatusBadge } from "@/components/account/StatusBadge";
 import { ADMIN_STATUSES, adminHref, listAdminRequests, parseAdminParams } from "@/lib/admin-requests";
 import { REQUEST_STATUS } from "@/lib/request-status";
 import { requireAdmin } from "@/lib/session";
+import { ButtonLink } from "@/components/ui/ButtonLink";
 
 export const metadata = { title: "Demandes" };
 
@@ -49,7 +50,7 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
             })}
           </ul>
         </nav>
-        <form role="search" action="/admin" className="flex h-11 w-full items-center rounded border border-line bg-card lg:w-80">
+        <form role="search" action="/admin" className="flex h-11 items-center rounded border border-line bg-card transition-colors focus-within:border-meta hover:border-meta">
           {filters.statut && <input type="hidden" name="statut" value={filters.statut} />}
           <label htmlFor="recherche-admin" className="sr-only">
             Rechercher une demande
@@ -60,7 +61,7 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
             type="search"
             defaultValue={filters.q}
             placeholder="Nom, e-mail, destination…"
-            className="h-full min-w-0 flex-1 bg-transparent px-3.5 text-[15px] placeholder:text-meta focus:outline-none"
+            className="h-full min-w-0 flex-1 bg-transparent px-2.5 text-[15px] placeholder:text-meta focus:outline-none"
           />
           <button type="submit" className="h-full px-4 text-[15px] font-medium text-accent hover:text-accent-dark">
             Rechercher
@@ -92,7 +93,7 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.id} className="border-b border-line align-top last:border-0 hover:bg-paper">
+                <tr key={r.id} className="border-b border-line align-center last:border-0 hover:bg-paper">
                   <td className="px-5 py-4 whitespace-nowrap text-muted">{r.createdAt}</td>
                   <td className="px-5 py-4">
                     <span className="font-medium">{r.contact.name}</span>
@@ -108,9 +109,9 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
                   <td className="px-5 py-4 text-sm text-muted">{r.dates}</td>
                   <td className="px-5 py-4"><StatusBadge status={r.status} /></td>
                   <td className="px-5 py-4 text-right">
-                    <Link href={`/admin/demandes/${r.id}`} className="whitespace-nowrap text-accent hover:underline">
+                    <ButtonLink href={`/admin/demandes/${r.id}`} size="md">
                       Traiter<span className="sr-only"> la demande de {r.contact.name}</span>
-                    </Link>
+                    </ButtonLink>
                   </td>
                 </tr>
               ))}
@@ -123,12 +124,12 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
         <nav aria-label="Pagination" className="flex items-center justify-between gap-4 text-[15px]">
           {page > 1 ? (
             <Link href={adminHref({ ...filters, page: page - 1 })} className="text-accent hover:underline">
-              ← Plus récentes
+              ◂Plus récentes
             </Link>
           ) : <span />}
           {page < pageCount ? (
             <Link href={adminHref({ ...filters, page: page + 1 })} className="text-accent hover:underline">
-              Plus anciennes →
+              Plus anciennes▸
             </Link>
           ) : <span />}
         </nav>

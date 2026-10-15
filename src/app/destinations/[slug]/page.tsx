@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps<"/destinations/[slu
   if (!destination) return { title: "Destination introuvable", robots: { index: false } };
 
   return {
-    title: `${destination.name} — voyage sur mesure`,
+    title: `${destination.name}`,
     description: destination.summary,
     alternates: { canonical: `/destinations/${destination.slug}` },
     openGraph: {

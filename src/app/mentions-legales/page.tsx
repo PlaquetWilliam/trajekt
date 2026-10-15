@@ -33,8 +33,6 @@ export default function LegalNoticePage() {
           items={[
             { label: "Éditeur", value: editor.name },
             { label: "Statut", value: editor.status },
-            { label: "Immatriculation", value: editor.registration },
-            { label: "Adresse", value: editor.address },
             { label: "E-mail", value: <a href={`mailto:${editor.email}`}>{editor.email}</a> },
             { label: "Téléphone", value: editor.phone },
             { label: "Directeur de la publication", value: editor.publicationDirector },

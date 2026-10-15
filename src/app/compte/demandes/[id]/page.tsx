@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: PageProps<"/compte/demandes/[
   const { id } = await params;
   const user = await requireUser(`/compte/demandes/${id}`);
   const request = await getUserTripRequest(user.id, id);
-  return { title: request ? `Demande — ${request.destination}` : "Demande introuvable" };
+  return { title: request ? `${request.destination}` : "Demande introuvable" };
 }
 
 const STATUS_HELP = {
@@ -54,7 +54,7 @@ export default async function TripRequestPage({ params }: PageProps<"/compte/dem
         <p className="max-w-2xl text-lg text-muted">{STATUS_HELP[r.status]}</p>
         {r.destinationSlug && (
           <Link href={`/destinations/${r.destinationSlug}`} className="text-[15px] text-accent hover:underline">
-            Revoir la fiche destination <span aria-hidden="true">→</span>
+            Revoir la fiche destination<span aria-hidden="true">▸</span>
           </Link>
         )}
       </header>
